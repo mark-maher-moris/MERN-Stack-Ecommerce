@@ -1,9 +1,14 @@
 import express from "express";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 const port = 3001 ;
-const mongodbConnect = "mongodb+srv://markmaher933:i2F178W1MiH1JR1O@cluster0.q09lw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+
+const mongodbConnect = process.env.MONGODB_URI || "default-mongodb-uri";
+
 
 mongoose.connect(mongodbConnect).then(() => {
   console.log("Connected to MongoDB");
