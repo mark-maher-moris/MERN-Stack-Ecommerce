@@ -1,23 +1,26 @@
 import e from "express";
 import userModel from "../models/userModel";
+import bycrypt from "bcrypt"
 
 interface RegisterParams {
-firstname : string ; 
-lastname : string ;
+    firstName : string ; 
+lastName : string ;
 email : string ;
 password : string ;
 }
 
-export const register =async ({firstname, lastname, email, password}: RegisterParams)=>  {
+export const register =async ({firstName, lastName, email, password}: RegisterParams)=>  {
 const findUser = await userModel.findOne({email :email});
 if(findUser ){
-    return {error : {message : "user already exist"}}
+    return {data :  "user already exist",statusCode: 400}
+
+}
+const bcryptPassword = await bycrypt.hash(password,10);
+const newUser = new userModel({firstName, lastName,email ,password :bcryptPassword});
+await newUser.save();
+return {data :  newUser,statusCode: 200}
 }
 
-const newUser = new userModel({firstname, lastname,email ,password});
-await newUser.save();
-return newUser;
-}
 interface LoginParams {
     email : string ;    
 password : string ;
@@ -26,11 +29,11 @@ password : string ;
 export const login = async ({email ,password}:LoginParams ) => {
 const findUser = await userModel.findOne({email});
 if(!findUser){
-    return {error : {message : "user does not exist"}}
+    return {data : "user does not exist",statusCode: 400}
 }
 const passwordMatch  =password === findUser.password;
 if(!passwordMatch){
-    return {error : {message : "password is incorrect"}}
+    return {data :  "password is incorrect",statusCode: 400}
 }
-return findUser;
+return {data :  findUser,statusCode: 200}
 }
