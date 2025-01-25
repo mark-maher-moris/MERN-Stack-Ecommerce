@@ -7,7 +7,7 @@ export const getAllProducts = async () => {
 
 
 export const seedInitialProducts = async () => {
-    const products = [
+    try {     const products = [
         {
             name: "MackBook M1 2022",
             price: 100,
@@ -24,7 +24,10 @@ export const seedInitialProducts = async () => {
     if(dbProducts.length === 0){
         await productModel.insertMany(products);
         console.log("Products seeded successfully");
-      }
+      } }catch(error){
+        console.log(error);
+    }
+ 
 
 }
 
