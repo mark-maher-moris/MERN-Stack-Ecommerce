@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import userRoute from "./routes/userRoute";
 import { seedInitialProducts } from "./services/productService";
 import productRoute from './routes/productRoute'  ; 
+import cartRoute from "./routes/cartRoute";
 dotenv.config();
 
 const app = express();
@@ -14,6 +15,7 @@ const mongodbConnect = process.env.MONGODB_URI || "default-mongodb-uri";
 
 app.use('/user',userRoute)
 app.use('/product', productRoute)
+app.use('/cart', cartRoute)
 
 
 mongoose.connect(mongodbConnect).then(() => {
