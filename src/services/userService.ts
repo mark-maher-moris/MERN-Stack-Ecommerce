@@ -31,7 +31,7 @@ const findUser = await userModel.findOne({email});
 if(!findUser){
     return {data : "user does not exist",statusCode: 400}
 }
-const passwordMatch  =password === findUser.password;
+const passwordMatch  =bycrypt.compare(password,findUser.password);
 if(!passwordMatch){
     return {data :  "password is incorrect",statusCode: 400}
 }
