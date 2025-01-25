@@ -1,6 +1,7 @@
 import e from "express";
 import userModel from "../models/userModel";
 import bycrypt from "bcrypt"
+import jwt from "jsonwebtoken"
 
 interface RegisterParams {
     firstName : string ; 
@@ -18,7 +19,7 @@ if(findUser ){
 const bcryptPassword = await bycrypt.hash(password,10);
 const newUser = new userModel({firstName, lastName,email ,password :bcryptPassword});
 await newUser.save();
-return {data :  newUser,statusCode: 200}
+return {data :  generateJWT ( {firstName , lastName, email}),statusCode: 200}
 }
 
 interface LoginParams {
@@ -35,5 +36,10 @@ const passwordMatch  =bycrypt.compare(password,findUser.password);
 if(!passwordMatch){
     return {data :  "password is incorrect",statusCode: 400}
 }
-return {data :  findUser,statusCode: 200}
+return {data :  generateJWT ({email , firstName : findUser.firstName , lastName : findUser.lastName}),statusCode: 200}
+}
+
+
+const generateJWT = (data : any)=> {
+    return jwt.sign(data ,process.env.JWT_SECRET||"") ; 
 }
