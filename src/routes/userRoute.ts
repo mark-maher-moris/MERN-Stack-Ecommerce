@@ -18,4 +18,6 @@ router.post('/login' ,async (request , response)=>{
     const {statusCode ,data} = await login({email ,password});
     response.status(statusCode).send(data);
 } )
+
+
 export default router;  
