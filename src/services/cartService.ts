@@ -2,6 +2,7 @@ import e from "express";
 import { cartModel, ICart } from "../models/cartModel";
 import productModel from "../models/productModel";
 import { parse } from "dotenv";
+import { IOrder ,IOrderItem, orderModel } from "../models/orderModel";
 
 interface CreateCartForUser { 
     userId : string ; 
@@ -124,4 +125,42 @@ cart.items = [];
 cart.totalAmount = 0 ;
 const updateedCart = await cart.save();
 return {data : updateedCart,statusCode : 200}
+}
+
+
+
+interface Checkout {
+    userId : string ;
+    address : string 
+}
+
+
+export const checkout = async ({userId, address }: Checkout )=>{
+    if(!address){
+        return {data :"Address is required",statusCode : 400}
+    }
+const cart = await getActiveCartForUser({userId});
+const orderItems : IOrderItem[] = [];
+for(const item of cart.items){
+    const product = await productModel.findById(item.product);
+    if(!product){
+        return {data :"Product does not exist",statusCode : 400}
+    }
+
+     const orderItem : IOrderItem  = {
+        productImage: product.image,
+    productTitle: product.name,
+    unitPrice : product.price, 
+    quantity : item.quantity,
+     }
+
+     orderItems.push(orderItem);
+
+}
+const order = await orderModel.create({orderItems ,totalAmount : cart.totalAmount ,address, userId});
+await order.save();
+cart.status = "completed";
+const updateedCart = await cart.save();
+return {data : updateedCart,statusCode : 200}
+
 }
