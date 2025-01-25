@@ -1,5 +1,5 @@
 import e from "express";
-import { cartModel } from "../models/cartModel";
+import { cartModel, ICart } from "../models/cartModel";
 import productModel from "../models/productModel";
 import { parse } from "dotenv";
 
@@ -116,3 +116,12 @@ return {data : updateedCart,statusCode : 200}
 
 }
 
+
+
+export const clearCart = async ({userId}: CreateCartForUser )=>{
+const cart = await getActiveCartForUser({userId});
+cart.items = [];
+cart.totalAmount = 0 ;
+const updateedCart = await cart.save();
+return {data : updateedCart,statusCode : 200}
+}
